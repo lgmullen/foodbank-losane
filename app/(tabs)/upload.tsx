@@ -1,4 +1,6 @@
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { UploadCamera } from "@/components/UploadPage/UploadCamera";
+import { UploadSuccess } from "@/components/UploadPage/uploadSuccess";
+import { useCameraPermissions } from "expo-camera";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Icon } from "react-native-paper";
@@ -9,10 +11,20 @@ export enum Status {
   SUCCESS = "success",
 }
 
+export interface PantryItem {
+  id: string;
+  name: string;
+  amount: string;
+}
+
 export default function Index() {
   const [permission, requestPermission] = useCameraPermissions();
-  const [uploadStatus, setUploadStatus] = useState<Status>(Status.CAMERA);
-  const [qrdata, setQrData] = useState("");
+  const [uploadStatus, setUploadStatus] = useState<Status>(Status.SUCCESS);
+  const [upLoadData, SetUploadData] = useState<PantryItem[]>([
+    { id: "1", name: "Apples", amount: "5" },
+    { id: "2", name: "Bananas", amount: "7" },
+    { id: "3", name: "Carrots", amount: "10" },
+  ]);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -33,9 +45,7 @@ export default function Index() {
 
   const handleQRScanned = (result: any) => {
     setUploadStatus(Status.SUCCESS);
-    setQrData(result.data);
-    console.log("qr scanned");
-    console.log(result.data);
+    SetUploadData(result.data);
   };
 
   return (
@@ -53,6 +63,7 @@ export default function Index() {
           setUploadStatus((currentStatus) => {
             if (currentStatus == Status.CAMERA) return Status.PENDING;
             if (currentStatus == Status.PENDING) return Status.CAMERA;
+            if (currentStatus == Status.SUCCESS) return Status.CAMERA;
             return currentStatus;
           })
         }
@@ -62,34 +73,12 @@ export default function Index() {
           size={24}
         />
       </Button>
-      {/* <Text> QR data: {qrdata}</Text> */}
 
       {uploadStatus == Status.CAMERA && (
-        <View style={(styles.container, StyleSheet.absoluteFillObject)}>
-          <CameraView
-            style={styles.camera}
-            onBarcodeScanned={(result) => {
-              handleQRScanned(result);
-            }}
-          >
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }} />
-            <View style={{ display: "flex", flexDirection: "row" }}>
-              {/* 3 things */}
-              <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }} />
-              <View
-                style={{
-                  width: 240,
-                  height: 240,
-                  borderColor: "white",
-                  borderWidth: 2,
-                  borderStyle: "dashed",
-                }}
-              />
-              <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }} />
-            </View>
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }} />
-          </CameraView>
-        </View>
+        <UploadCamera handleQRScanned={handleQRScanned} />
+      )}
+      {uploadStatus == Status.SUCCESS && (
+        <UploadSuccess upLoadData={upLoadData} SetUploadData={SetUploadData} />
       )}
     </View>
   );
@@ -107,7 +96,6 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-
   button: {
     position: "absolute",
     top: 24,
