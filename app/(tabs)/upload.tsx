@@ -1,9 +1,10 @@
 import { UploadCamera } from "@/components/UploadPage/UploadCamera";
+import { UploadPending } from "@/components/UploadPage/UploadPending";
 import { UploadSuccess } from "@/components/UploadPage/uploadSuccess";
 import { useCameraPermissions } from "expo-camera";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button, Icon } from "react-native-paper";
+import { Button } from "react-native-paper";
 
 export enum Status {
   PENDING = "pending",
@@ -56,29 +57,26 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Button
-        style={styles.button}
-        mode="contained"
-        onPress={() =>
-          setUploadStatus((currentStatus) => {
-            if (currentStatus == Status.CAMERA) return Status.PENDING;
-            if (currentStatus == Status.PENDING) return Status.CAMERA;
-            if (currentStatus == Status.SUCCESS) return Status.CAMERA;
-            return currentStatus;
-          })
-        }
-      >
-        <Icon
-          source={uploadStatus == "pending" ? "camera" : "close"}
-          size={24}
+      {uploadStatus == Status.PENDING && (
+        <UploadPending
+          setUploadStatus={setUploadStatus}
+          uploadStatus={uploadStatus}
         />
-      </Button>
-
+      )}
       {uploadStatus == Status.CAMERA && (
-        <UploadCamera handleQRScanned={handleQRScanned} />
+        <UploadCamera
+          handleQRScanned={handleQRScanned}
+          setUploadStatus={setUploadStatus}
+          uploadStatus={uploadStatus}
+        />
       )}
       {uploadStatus == Status.SUCCESS && (
-        <UploadSuccess upLoadData={upLoadData} SetUploadData={SetUploadData} />
+        <UploadSuccess
+          upLoadData={upLoadData}
+          SetUploadData={SetUploadData}
+          setUploadStatus={setUploadStatus}
+          uploadStatus={uploadStatus}
+        />
       )}
     </View>
   );
@@ -95,11 +93,5 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-  },
-  button: {
-    position: "absolute",
-    top: 24,
-    right: 24,
-    zIndex: 1,
   },
 });

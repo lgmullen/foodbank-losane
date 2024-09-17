@@ -78,7 +78,8 @@ const PantryList: FunctionComponent<PantryListProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 0,
     flex: 1,
   },
   card: {
