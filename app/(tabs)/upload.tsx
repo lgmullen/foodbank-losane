@@ -1,7 +1,7 @@
-import { UploadCamera } from "@/components/UploadPage/UploadCamera";
+import { UploadCamera } from "@/components/UploadPage/uploadCamera";
 import { UploadSuccess } from "@/components/UploadPage/uploadSuccess";
 import { useCameraPermissions } from "expo-camera";
-import { useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Icon } from "react-native-paper";
 
