@@ -1,7 +1,7 @@
-import { addItem, fetchItems } from "@/api/items";
+import { addItem, fetchItems, deleteItem } from "@/api/items";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export function useItems() {
+export function useGetItems() {
   return useQuery({
     queryKey: ["items"],
     queryFn: fetchItems,
@@ -16,6 +16,16 @@ export function useAddItem(onSuccessCallback?: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
       if (onSuccessCallback) onSuccessCallback();
+    },
+  });
+}
+
+export function useDeleteItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
 }

@@ -27,6 +27,28 @@ export const fetchItems = async () => {
   return data.items || [];
 };
 
+export const deleteItem = async (itemId: string) => {
+  const token = await AsyncStorage.getItem("token");
+  const response = await fetch(
+    `https://foodbank-1091070284572.us-central1.run.app/deleteItem/${itemId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  console.log("📥 Response status:", response.status);
+
+  if (!response.ok) {
+    throw new Error("Failed to delete item");
+  }
+
+  return response.json();
+};
+
 export const addItem = async (itemData: ItemData) => {
   const token = await AsyncStorage.getItem("token");
   const response = await fetch(
