@@ -27,16 +27,18 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      ["expo-router"],
+      [
+        "expo-router"
+      ],
       [
         "expo-camera",
         {
           "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
           "enableCodeScanner": true
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
-
     "experiments": {
       "typedRoutes": true
     }

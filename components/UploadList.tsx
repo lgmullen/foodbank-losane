@@ -1,4 +1,5 @@
 import { PantryItem } from "@/app/(tabs)/upload";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { FunctionComponent, useState } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import { TextInput, Button, Card, Title, IconButton } from "react-native-paper";
@@ -30,8 +31,8 @@ const PantryList: FunctionComponent<PantryListProps> = ({
     );
     setEditingItem(null);
   };
-
-  const renderItem = (item: any) => {
+  console.log(UploadData);
+  const renderItem = ({ item }: { item: PantryItem }) => {
     return (
       <Card style={styles.card} key={item.id}>
         {editingItem === item.id ? (
@@ -58,7 +59,10 @@ const PantryList: FunctionComponent<PantryListProps> = ({
           <View style={styles.itemRow}>
             <Title>{item.name}</Title>
             <Title>{item.amount}</Title>
-            <IconButton icon="pencil" onPress={() => startEditing(item)} />
+
+            <Button onPress={() => startEditing(item)}>
+              <Ionicons name="pencil" color="black" />
+            </Button>
           </View>
         )}
       </Card>
@@ -66,38 +70,44 @@ const PantryList: FunctionComponent<PantryListProps> = ({
   };
 
   return (
-    <FlatList
-      data={UploadData}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => renderItem(item)}
-      contentContainerStyle={styles.container}
-      style={styles.flatlist}
-    />
+    <View style={styles.outerContainer}>
+      <FlatList
+        data={UploadData}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={styles.flatListContainer}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  outerContainer: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    padding: 16,
+    marginTop: "20%",
+  },
+  flatListContainer: {
+    alignItems: "center",
+    paddingBottom: 16, // Prevents overlap at the bottom
   },
   card: {
-    marginBottom: 16,
-    padding: 32,
-    flex: 1,
+    width: "90%", // Prevents
+    marginVertical: 8, // Ensures spacing between cards
+    padding: 16,
   },
   itemRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
   },
+
   input: {
     marginBottom: 8,
-  },
-  flatlist: {
-    display: "flex",
-    flex: 1,
-    width: "100%",
   },
 });
 
