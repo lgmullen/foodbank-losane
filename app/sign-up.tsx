@@ -1,7 +1,7 @@
 import { fetchSignup } from "@/api/auth";
 import { useAuth } from "@/auth/AuthContext";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button, Text, View, Alert } from "react-native";
 import { TextInput } from "react-native-paper";
 
@@ -10,6 +10,8 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const passwordInputRef = useRef<any>(null);
+  const confirmPasswordInputRef = useRef<any>(null);
 
   const { login } = useAuth();
 
@@ -65,12 +67,15 @@ export default function SignUp() {
           marginBottom: 15,
           borderRadius: 8,
           backgroundColor: "#2a2a2a",
-          color: "#fff",
         }}
+        textColor="#fff"
         placeholderTextColor="#888"
+        returnKeyType="next"
+        onSubmitEditing={() => passwordInputRef.current?.focus()}
       />
       
       <TextInput
+        ref={passwordInputRef}
         value={password}
         placeholder="Enter password"
         onChangeText={setPassword}
@@ -82,12 +87,15 @@ export default function SignUp() {
           marginBottom: 15,
           borderRadius: 8,
           backgroundColor: "#2a2a2a",
-          color: "#fff",
         }}
+        textColor="#fff"
         placeholderTextColor="#888"
+        returnKeyType="next"
+        onSubmitEditing={() => confirmPasswordInputRef.current?.focus()}
       />
       
       <TextInput
+        ref={confirmPasswordInputRef}
         value={confirmPassword}
         placeholder="Confirm password"
         onChangeText={setConfirmPassword}
@@ -99,9 +107,11 @@ export default function SignUp() {
           marginBottom: 25,
           borderRadius: 8,
           backgroundColor: "#2a2a2a",
-          color: "#fff",
         }}
+        textColor="#fff"
         placeholderTextColor="#888"
+        returnKeyType="done"
+        onSubmitEditing={handleSignUp}
       />
       
       <Button
@@ -112,7 +122,7 @@ export default function SignUp() {
       />
       
       <View style={{ marginTop: 20, alignItems: "center" }}>
-        <Text style={{ color: "#ccc", marginBottom: 10 }}>
+        <Text style={{ color: "#fff", marginBottom: 10 }}>
           Already have an account?
         </Text>
         <Button

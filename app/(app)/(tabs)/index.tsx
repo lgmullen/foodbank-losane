@@ -67,6 +67,8 @@ export default function HomePage() {
               placeholderTextColor="#888"
               value={itemName}
               onChangeText={setItemName}
+              onSubmitEditing={handleAddItem}
+              returnKeyType="done"
             />
             <TouchableOpacity onPress={handleAddItem} style={styles.addButton}>
               <Text style={styles.addButtonText}>Add Item</Text>
