@@ -22,3 +22,5 @@ steps:
       - -c
       - |
         gsutil -m rsync -r -c build/ gs://foodbank-frontend
+options:
+  logging: CLOUD_LOGGING_ONLY
