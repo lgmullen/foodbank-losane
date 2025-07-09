@@ -1,15 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface ItemData {
-  userId: number;
+  userId?: number;
   item: string;
   quantity: number;
 }
 export const fetchItems = async () => {
   console.log("fetching");
   const token = await AsyncStorage.getItem("token");
+  const userData = await AsyncStorage.getItem("user");
+  
+  if (!userData) {
+    throw new Error("User not found");
+  }
+  
+  const user = JSON.parse(userData);
   const response = await fetch(
-    "https://foodbank-1091070284572.us-central1.run.app/getItems/5",
+    `https://foodbank-1091070284572.us-central1.run.app/getItems/${user.id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -51,6 +58,13 @@ export const deleteItem = async (itemId: string) => {
 
 export const addItem = async (itemData: ItemData) => {
   const token = await AsyncStorage.getItem("token");
+  const userData = await AsyncStorage.getItem("user");
+  
+  if (!userData) {
+    throw new Error("User not found");
+  }
+  
+  const user = JSON.parse(userData);
   const response = await fetch(
     "https://foodbank-1091070284572.us-central1.run.app/addItem",
     {
@@ -59,7 +73,10 @@ export const addItem = async (itemData: ItemData) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(itemData),
+      body: JSON.stringify({
+        ...itemData,
+        userId: user.id,
+      }),
     }
   );
 

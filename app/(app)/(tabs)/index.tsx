@@ -28,7 +28,6 @@ export default function HomePage() {
   const handleAddItem = () => {
     const newItem: ItemData = {
       item: itemName,
-      userId: 5,
       quantity: 1,
     };
     addItem(newItem);
