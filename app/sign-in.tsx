@@ -1,12 +1,13 @@
 import { useAuth } from "@/auth/AuthContext";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const passwordInputRef = useRef<any>(null);
 
   const { login } = useAuth();
 
@@ -26,11 +27,14 @@ export default function SignIn() {
           marginBottom: 15,
           borderRadius: 8,
           backgroundColor: "#2a2a2a",
-          color: "#fff",
         }}
+        textColor="#fff"
         placeholderTextColor="#888"
+        returnKeyType="next"
+        onSubmitEditing={() => passwordInputRef.current?.focus()}
       />
       <TextInput
+        ref={passwordInputRef}
         value={password}
         placeholder="Enter password"
         onChangeText={setPassword}
@@ -42,9 +46,14 @@ export default function SignIn() {
           marginBottom: 25,
           borderRadius: 8,
           backgroundColor: "#2a2a2a",
-          color: "#fff",
         }}
+        textColor="#fff"
         placeholderTextColor="#888"
+        returnKeyType="done"
+        onSubmitEditing={async () => {
+          await login({ username, password });
+          router.replace("/");
+        }}
       />
       <Button
         onPress={async () => {
@@ -56,7 +65,7 @@ export default function SignIn() {
       />
       
       <View style={{ marginTop: 20, alignItems: "center" }}>
-        <Text style={{ color: "#ccc", marginBottom: 10 }}>
+        <Text style={{ color: "#fff", marginBottom: 10 }}>
           Don't have an account?
         </Text>
         <Button
