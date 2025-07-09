@@ -1,0 +1,24 @@
+steps:
+  # Step 1: Install dependencies
+  - name: "node:20"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        npm install
+
+  # Step 2: Build the app
+  - name: "node:20"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        npx expo export:web
+
+  # Step 3: Upload build output to GCS
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gsutil -m rsync -r -c build/ gs://foodbank-frontend
