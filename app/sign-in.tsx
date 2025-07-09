@@ -11,37 +11,60 @@ export default function SignIn() {
   const { login } = useAuth();
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
-      <Text style={{ fontSize: 24, marginBottom: 16 }}>Login</Text>
+    <View style={{ flex: 1, justifyContent: "center", padding: 20, backgroundColor: "#121212" }}>
+      <Text style={{ fontSize: 28, marginBottom: 30, textAlign: "center", color: "#fff", fontWeight: "bold" }}>
+        Sign In
+      </Text>
       <TextInput
         value={username}
         placeholder="Enter username"
         onChangeText={setUsername}
         style={{
           borderWidth: 1,
-          padding: 10,
-          marginBottom: 20,
-          borderRadius: 6,
+          borderColor: "#333",
+          padding: 15,
+          marginBottom: 15,
+          borderRadius: 8,
+          backgroundColor: "#2a2a2a",
+          color: "#fff",
         }}
+        placeholderTextColor="#888"
       />
       <TextInput
         value={password}
         placeholder="Enter password"
         onChangeText={setPassword}
+        secureTextEntry
         style={{
           borderWidth: 1,
-          padding: 10,
-          marginBottom: 20,
-          borderRadius: 6,
+          borderColor: "#333",
+          padding: 15,
+          marginBottom: 25,
+          borderRadius: 8,
+          backgroundColor: "#2a2a2a",
+          color: "#fff",
         }}
+        placeholderTextColor="#888"
       />
       <Button
         onPress={async () => {
           await login({ username, password });
           router.replace("/");
         }}
-        title="button"
+        title="Sign In"
+        color="#1DB954"
       />
+      
+      <View style={{ marginTop: 20, alignItems: "center" }}>
+        <Text style={{ color: "#ccc", marginBottom: 10 }}>
+          Don't have an account?
+        </Text>
+        <Button
+          onPress={() => router.replace("/sign-up")}
+          title="Sign Up"
+          color="#1DB954"
+        />
+      </View>
     </View>
   );
 }
