@@ -12,15 +12,18 @@ import {
 } from "react-native";
 
 import { useAuth } from "@/auth/AuthContext";
-import { useAddItem, useItems } from "../../../hooks/useItems";
+import { useAddItem, useGetItems, useDeleteItem } from "../../../hooks/useItems";
 import { ItemData } from "@/api/items";
 
 export default function HomePage() {
   const { logout } = useAuth();
 
-  const { data: items, isLoading } = useItems();
+  const { data: items, isLoading } = useGetItems();
+  console.log(items);
   const { mutate: addItem, isPending, error } = useAddItem();
+  const { mutate: deleteItem, isPending: isDeleting, error: deleteError } = useDeleteItem();
   const [itemName, setItemName] = useState("");
+  
 
   const handleAddItem = () => {
     const newItem: ItemData = {
@@ -30,6 +33,10 @@ export default function HomePage() {
     };
     addItem(newItem);
     setItemName("");
+  };
+
+  const handleDeleteItem = (itemId: string) => {  
+    deleteItem(itemId);
   };
 
   if (isLoading)
@@ -51,7 +58,7 @@ export default function HomePage() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => <ItemCard item={item} />}
+        renderItem={({ item }) => <ItemCard item={item} handleDeleteItem={handleDeleteItem} isDeleting={isDeleting} />}
         ListFooterComponent={
           <View style={styles.addItemCard}>
             <Text style={styles.sectionTitle}>Add New Item</Text>
@@ -72,7 +79,7 @@ export default function HomePage() {
   );
 }
 
-function ItemCard({ item }: { item: any }) {
+function ItemCard({ item, handleDeleteItem, isDeleting }: { item: any, handleDeleteItem: (id: string) => void, isDeleting: boolean }) {
   const scale = useState(new Animated.Value(1))[0];
 
   const handlePressIn = () => {
@@ -95,12 +102,19 @@ function ItemCard({ item }: { item: any }) {
       onPressOut={handlePressOut}
       style={styles.cardWrapper}
     >
-      <Animated.View style={[styles.itemCard, { transform: [{ scale }] }]}>
+      <Animated.View style={[styles.itemCard, { transform: [{ scale }] }]}>        
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemText}>Qty: {item.quantity}</Text>
         <Text style={styles.itemText}>
           Exp: {new Date(item.expirationDate).toLocaleDateString()}
         </Text>
+        <TouchableOpacity
+          onPress={() => handleDeleteItem(item.id)}
+          style={{ marginTop: 6, backgroundColor: '#FF6B6B', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 }}
+          disabled={isDeleting}
+        >
+          <Text style={{ color: '#fff', fontSize: 10 }}>{isDeleting ? 'Deleting...' : 'Delete'}</Text>
+        </TouchableOpacity>
       </Animated.View>
     </Pressable>
   );
