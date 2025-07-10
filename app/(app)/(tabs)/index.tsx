@@ -1,40 +1,52 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Pressable,
-  Animated,
 } from "react-native";
 
-import { useAuth } from "@/auth/AuthContext";
-import { useAddItem, useGetItems, useDeleteItem } from "../../../hooks/useItems";
 import { ItemData } from "@/api/items";
+import { useAuth } from "@/auth/AuthContext";
+import {
+  useAddItem,
+  useDeleteItem,
+  useGetItems,
+} from "../../../hooks/useItems";
 
 export default function HomePage() {
   const { logout } = useAuth();
 
   const { data: items, isLoading } = useGetItems();
-  console.log(items);
-  const { mutate: addItem, isPending, error } = useAddItem();
-  const { mutate: deleteItem, isPending: isDeleting, error: deleteError } = useDeleteItem();
+  const { mutate: addItem, error } = useAddItem();
+  const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
+
   const [itemName, setItemName] = useState("");
-  
+  const [foodItems, setFoodItems] = useState<any[]>(items);
+
+  useEffect(() => {
+    if (items) {
+      setFoodItems(items);
+    }
+  }, [items]);
 
   const handleAddItem = () => {
     const newItem: ItemData = {
       item: itemName,
       quantity: 1,
     };
+
     addItem(newItem);
     setItemName("");
   };
 
-  const handleDeleteItem = (itemId: string) => {  
+  const handleDeleteItem = (itemId: string) => {
+    setFoodItems((prev) => prev.filter((item) => item.id !== itemId));
     deleteItem(itemId);
   };
 
@@ -53,11 +65,13 @@ export default function HomePage() {
       </View>
 
       <FlatList
-        data={items}
+        data={foodItems}
         numColumns={2}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => <ItemCard item={item} handleDeleteItem={handleDeleteItem} />}
+        renderItem={({ item }) => (
+          <ItemCard item={item} handleDeleteItem={handleDeleteItem} />
+        )}
         ListFooterComponent={
           <View style={styles.addItemCard}>
             <Text style={styles.sectionTitle}>Add New Item</Text>
@@ -80,7 +94,13 @@ export default function HomePage() {
   );
 }
 
-function ItemCard({ item, handleDeleteItem }: { item: any, handleDeleteItem: (id: string) => void }) {
+function ItemCard({
+  item,
+  handleDeleteItem,
+}: {
+  item: any;
+  handleDeleteItem: (id: string) => void;
+}) {
   const scale = useState(new Animated.Value(1))[0];
 
   const handlePressIn = () => {
@@ -103,7 +123,7 @@ function ItemCard({ item, handleDeleteItem }: { item: any, handleDeleteItem: (id
       onPressOut={handlePressOut}
       style={styles.cardWrapper}
     >
-      <Animated.View style={[styles.itemCard, { transform: [{ scale }] }]}>        
+      <Animated.View style={[styles.itemCard, { transform: [{ scale }] }]}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemText}>Qty: {item.quantity}</Text>
         <Text style={styles.itemText}>
@@ -111,9 +131,15 @@ function ItemCard({ item, handleDeleteItem }: { item: any, handleDeleteItem: (id
         </Text>
         <TouchableOpacity
           onPress={() => handleDeleteItem(item.id)}
-          style={{ marginTop: 6, backgroundColor: '#FF6B6B', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 }}
+          style={{
+            marginTop: 6,
+            backgroundColor: "#FF6B6B",
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+          }}
         >
-          <Text style={{ color: '#fff', fontSize: 10 }}>Delete</Text>
+          <Text style={{ color: "#fff", fontSize: 10 }}>Delete</Text>
         </TouchableOpacity>
       </Animated.View>
     </Pressable>
