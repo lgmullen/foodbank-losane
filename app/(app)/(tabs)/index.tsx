@@ -57,7 +57,7 @@ export default function HomePage() {
         numColumns={2}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => <ItemCard item={item} handleDeleteItem={handleDeleteItem} isDeleting={isDeleting} />}
+        renderItem={({ item }) => <ItemCard item={item} handleDeleteItem={handleDeleteItem} />}
         ListFooterComponent={
           <View style={styles.addItemCard}>
             <Text style={styles.sectionTitle}>Add New Item</Text>
@@ -80,7 +80,7 @@ export default function HomePage() {
   );
 }
 
-function ItemCard({ item, handleDeleteItem, isDeleting }: { item: any, handleDeleteItem: (id: string) => void, isDeleting: boolean }) {
+function ItemCard({ item, handleDeleteItem }: { item: any, handleDeleteItem: (id: string) => void }) {
   const scale = useState(new Animated.Value(1))[0];
 
   const handlePressIn = () => {
@@ -112,9 +112,8 @@ function ItemCard({ item, handleDeleteItem, isDeleting }: { item: any, handleDel
         <TouchableOpacity
           onPress={() => handleDeleteItem(item.id)}
           style={{ marginTop: 6, backgroundColor: '#FF6B6B', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 }}
-          disabled={isDeleting}
         >
-          <Text style={{ color: '#fff', fontSize: 10 }}>{isDeleting ? 'Deleting...' : 'Delete'}</Text>
+          <Text style={{ color: '#fff', fontSize: 10 }}>Delete</Text>
         </TouchableOpacity>
       </Animated.View>
     </Pressable>
