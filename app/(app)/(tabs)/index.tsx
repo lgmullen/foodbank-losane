@@ -70,11 +70,7 @@ export default function HomePage() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <ItemCard
-            item={item}
-            handleDeleteItem={handleDeleteItem}
-            isDeleting={isDeleting}
-          />
+          <ItemCard item={item} handleDeleteItem={handleDeleteItem} />
         )}
         ListFooterComponent={
           <View style={styles.addItemCard}>
@@ -101,11 +97,9 @@ export default function HomePage() {
 function ItemCard({
   item,
   handleDeleteItem,
-  isDeleting,
 }: {
   item: any;
   handleDeleteItem: (id: string) => void;
-  isDeleting: boolean;
 }) {
   const scale = useState(new Animated.Value(1))[0];
 
@@ -144,11 +138,8 @@ function ItemCard({
             paddingHorizontal: 8,
             paddingVertical: 2,
           }}
-          disabled={isDeleting}
         >
-          <Text style={{ color: "#fff", fontSize: 10 }}>
-            {isDeleting ? "Deleting..." : "Delete"}
-          </Text>
+          <Text style={{ color: "#fff", fontSize: 10 }}>Delete</Text>
         </TouchableOpacity>
       </Animated.View>
     </Pressable>
