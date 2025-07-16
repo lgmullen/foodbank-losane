@@ -1,4 +1,4 @@
-import { addItem, fetchItems, deleteItem } from "@/api/items";
+import { addItem, fetchItems, deleteItem, searchItems } from "@/api/items";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useGetItems() {
@@ -8,9 +8,15 @@ export function useGetItems() {
   });
 }
 
+export function useQueryItems(query: string) {
+  return useQuery({
+    queryKey: ["searchItems"],
+    queryFn: () => searchItems(query),
+  });
+}
+
 export function useAddItem(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
-  console.log("here");
   return useMutation({
     mutationFn: addItem,
     onSuccess: () => {

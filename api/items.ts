@@ -9,11 +9,11 @@ export const fetchItems = async () => {
   console.log("fetching");
   const token = await AsyncStorage.getItem("token");
   const userData = await AsyncStorage.getItem("user");
-  
+
   if (!userData) {
     throw new Error("User not found");
   }
-  
+
   const user = JSON.parse(userData);
   const response = await fetch(
     `https://foodbank-1091070284572.us-central1.run.app/getItems/${user.id}`,
@@ -59,11 +59,11 @@ export const deleteItem = async (itemId: string) => {
 export const addItem = async (itemData: ItemData) => {
   const token = await AsyncStorage.getItem("token");
   const userData = await AsyncStorage.getItem("user");
-  
+
   if (!userData) {
     throw new Error("User not found");
   }
-  
+
   const user = JSON.parse(userData);
   const response = await fetch(
     "https://foodbank-1091070284572.us-central1.run.app/addItem",
@@ -87,4 +87,34 @@ export const addItem = async (itemData: ItemData) => {
   }
 
   return response.json();
+};
+
+export const searchItems = async (query: string) => {
+  const token = await AsyncStorage.getItem("token");
+  const userData = await AsyncStorage.getItem("user");
+
+  if (!userData) {
+    throw new Error("User not found");
+  }
+
+  const response = await fetch(
+    `https://foodbank-1091070284572.us-central1.run.app/search/${query}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  console.log("📥 Response status:", response.status);
+
+  if (!response.ok) {
+    throw new Error("Failed to add item");
+  }
+
+  const data = await response.json();
+  console.log(data);
+  return data.items || [];
 };

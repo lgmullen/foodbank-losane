@@ -17,17 +17,22 @@ import {
   useAddItem,
   useDeleteItem,
   useGetItems,
+  useQueryItems,
 } from "../../../hooks/useItems";
+import { ItemInput } from "@/components/InventoryPage/ItemInput";
 
 export default function HomePage() {
   const { logout } = useAuth();
 
   const { data: items, isLoading } = useGetItems();
+  const { data: searchItems } = useQueryItems("");
+
   const { mutate: addItem, error } = useAddItem();
   const { mutate: deleteItem, isPending: isDeleting } = useDeleteItem();
 
   const [itemName, setItemName] = useState("");
   const [foodItems, setFoodItems] = useState<any[]>(items);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
     if (items) {
@@ -73,21 +78,11 @@ export default function HomePage() {
           <ItemCard item={item} handleDeleteItem={handleDeleteItem} />
         )}
         ListFooterComponent={
-          <View style={styles.addItemCard}>
-            <Text style={styles.sectionTitle}>Add New Item</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Apples"
-              placeholderTextColor="#888"
-              value={itemName}
-              onChangeText={setItemName}
-              onSubmitEditing={handleAddItem}
-              returnKeyType="done"
-            />
-            <TouchableOpacity onPress={handleAddItem} style={styles.addButton}>
-              <Text style={styles.addButtonText}>Add Item</Text>
-            </TouchableOpacity>
-          </View>
+          <ItemInput
+            handleAddItem={handleAddItem}
+            itemName={itemName}
+            setItemName={setItemName}
+          />
         }
       />
     </View>
@@ -145,7 +140,6 @@ function ItemCard({
     </Pressable>
   );
 }
-
 const styles = StyleSheet.create({
   error: {
     color: "#FF6B6B",
@@ -187,54 +181,24 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
-    padding: 4, // reduced padding between cards
+    padding: 4,
   },
   itemCard: {
     backgroundColor: "#1e1e1e",
-    borderRadius: 16, // slightly smaller rounding
-    padding: 10, // less padding inside card
-    height: 90, // smaller height (was 140)
+    borderRadius: 16,
+    padding: 10,
+    height: 90,
     justifyContent: "center",
     alignItems: "center",
   },
   itemName: {
-    fontSize: 12, // smaller font size (was 16)
+    fontSize: 12,
     fontWeight: "600",
     color: "#fff",
-    marginBottom: 4, // less margin (was 6)
+    marginBottom: 4,
   },
   itemText: {
     color: "#aaa",
-    fontSize: 10, // smaller font (was 13)
-  },
-  addItemCard: {
-    backgroundColor: "#1e1e1e",
-    borderRadius: 20,
-    padding: 12, // less padding (was 20)
-    margin: 12, // less margin (was 20)
-  },
-  sectionTitle: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  input: {
-    backgroundColor: "#2a2a2a",
-    borderRadius: 12,
-    padding: 8, // less padding (was 12)
-    color: "#fff",
-    marginBottom: 8, // less margin (was 10)
-  },
-  addButton: {
-    backgroundColor: "#1DB954",
-    paddingVertical: 8, // smaller height (was 12)
-    borderRadius: 999,
-    alignItems: "center",
-  },
-  addButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 14, // smaller font (was 16)
+    fontSize: 10,
   },
 });
